@@ -33,12 +33,12 @@ jobs:
       - name: Build macOS x64
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder --mac --config builder-mac-x64.json
+        run: npx electron-builder --mac --config builder-mac-x64.json --publish never
 
       - name: Build macOS arm64
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder --mac --config builder-mac-arm64.json
+        run: npx electron-builder --mac --config builder-mac-arm64.json --publish never
 
       - name: Ad-hoc re-sign and verify
         run: |
