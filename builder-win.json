@@ -1,0 +1,33 @@
+{
+  "appId": "cn.ycfs.app",
+  "productName": "言出法随生信APP",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    "main.js",
+    "preload.js",
+    "pages/**/*",
+    "build/icon.png"
+  ],
+  "icon": "build/icon.png",
+  "asar": true,
+  "electronFuses": {
+    "runAsNode": false,
+    "enableCookieEncryption": true,
+    "enableNodeOptionsEnvironmentVariable": false,
+    "enableNodeCliInspectArguments": false,
+    "enableEmbeddedAsarIntegrityValidation": true,
+    "onlyLoadAppFromAsar": true,
+    "grantFileProtocolExtraPrivileges": false
+  },
+  "win": {
+    "target": [
+      { "target": "portable", "arch": ["x64"] }
+    ],
+    "artifactName": "言出法随生信APP-Portable-${version}.${ext}"
+  },
+  "portable": {
+    "artifactName": "言出法随生信APP-Portable-${version}.${ext}"
+  }
+}

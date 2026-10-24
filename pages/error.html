@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>连接失败 - YCFS 生信平台</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    background: linear-gradient(160deg, #0b4d3d 0%, #0d6550 45%, #128a6b 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: #eafff7;
+  }
+  .card {
+    width: 480px; max-width: 90vw;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 18px;
+    padding: 40px 36px;
+    text-align: center;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  }
+  .logo {
+    width: 74px; height: 74px; margin: 0 auto 18px;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #0d6550; font-weight: 800; font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 1px;
+  }
+  h1 { font-size: 21px; margin-bottom: 12px; font-weight: 600; }
+  p { font-size: 13px; opacity: .85; line-height: 1.7; word-break: break-all; margin-bottom: 26px; }
+  .row { display: flex; gap: 12px; justify-content: center; }
+  button {
+    flex: 1; height: 42px; border: none; border-radius: 10px;
+    font-size: 15px; cursor: pointer; font-family: inherit;
+  }
+  #retry { background: #ffffff; color: #0d6550; font-weight: 700; }
+  #retry:hover { background: #e8fff7; }
+  #open { background: transparent; color: #eafff7; border: 1px solid rgba(255,255,255,0.5); }
+  #open:hover { background: rgba(255,255,255,0.12); }
+  .tip { margin-top: 22px; font-size: 12px; opacity: .6; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">YCFS</div>
+    <h1>无法连接服务器</h1>
+    <p id="msg">请检查网络连接，或确认服务器是否正在维护。</p>
+    <div class="row">
+      <button id="retry">重试</button>
+      <button id="open">用浏览器打开</button>
+    </div>
+    <div class="tip">服务器地址可在「文件 → 服务器地址…」中修改</div>
+  </div>
+<script>
+  const qs = new URLSearchParams(location.search);
+  const err = qs.get('err') || '';
+  const from = qs.get('from') || '';
+  if (err || from) {
+    document.getElementById('msg').textContent =
+      (err ? err : '') + (from ? '\n' + from : '');
+  }
+  document.getElementById('retry').addEventListener('click', () => {
+    window.ycfs.retry(from);
+  });
+  document.getElementById('open').addEventListener('click', () => {
+    if (from) window.ycfs.openExternal(from);
+  });
+</script>
+</body>
+</html>

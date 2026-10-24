@@ -1,0 +1,23 @@
+{
+  "appId": "cn.ycfs.app",
+  "productName": "言出法随生信APP",
+  "directories": { "output": "dist-arm64" },
+  "files": ["main.js", "preload.js", "pages/**/*", "build/icon.png"],
+  "icon": "build/icon.png",
+  "asar": true,
+  "electronFuses": {
+    "runAsNode": false,
+    "enableCookieEncryption": true,
+    "enableNodeOptionsEnvironmentVariable": false,
+    "enableNodeCliInspectArguments": false,
+    "enableEmbeddedAsarIntegrityValidation": false,
+    "onlyLoadAppFromAsar": true,
+    "grantFileProtocolExtraPrivileges": false
+  },
+  "mac": {
+    "target": [{ "target": "zip", "arch": ["arm64"] }],
+    "category": "public.app-category.productivity",
+    "identity": null,
+    "artifactName": "言出法随生信APP-1.0.2-mac-arm64.${ext}"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "name": "ycfs-app",
+  "version": "1.0.2",
+  "description": "言出法随生信APP 桌面客户端（Windows / macOS）",
+  "main": "main.js",
+  "author": "YCFS",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable --config builder-win.json",
+    "dist:mac": "electron-builder --mac zip"
+  },
+  "devDependencies": {
+    "@electron/fuses": "^2.1.3",
+    "electron": "latest",
+    "electron-builder": "latest"
+  },
+  "build": {
+    "appId": "cn.ycfs.app",
+    "productName": "言出法随生信APP",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "pages/**/*",
+      "build/icon.png"
+    ],
+    "icon": "build/icon.png",
+    "asar": true,
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": false,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": false
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "言出法随生信APP-Portable-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "言出法随生信APP-Portable-${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "artifactName": "言出法随生信APP-${version}-mac-${arch}.${ext}"
+    }
+  }
+}

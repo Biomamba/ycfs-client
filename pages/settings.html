@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>服务器设置 - YCFS 生信平台</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    background: #f4f8f6; padding: 22px 24px; color: #17332b;
+  }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  input {
+    width: 100%; height: 40px; padding: 0 12px;
+    border: 1px solid #bfcfca; border-radius: 8px;
+    font-size: 14px; font-family: inherit; outline: none;
+  }
+  input:focus { border-color: #128a6b; box-shadow: 0 0 0 3px rgba(18,138,107,0.15); }
+  .hint { font-size: 12px; color: #67817a; margin-top: 8px; line-height: 1.6; }
+  .row { display: flex; gap: 10px; margin-top: 20px; }
+  button {
+    flex: 1; height: 40px; border: none; border-radius: 8px;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  #save { background: #0d6550; color: #fff; font-weight: 600; }
+  #save:hover { background: #128a6b; }
+  #cancel { background: #e2eae7; color: #17332b; }
+</style>
+</head>
+<body>
+  <label for="url">服务器地址</label>
+  <input id="url" type="text" spellcheck="false" placeholder="https://www.biomamba.cn/YCFS_APP/">
+  <div class="hint">默认为线上平台地址。修改后将保存并重新连接，登录状态可能需要重新登录。</div>
+  <div class="row">
+    <button id="cancel">取消</button>
+    <button id="save">保存并重连</button>
+  </div>
+<script>
+  const input = document.getElementById('url');
+  window.ycfs.getConfig().then((cfg) => {
+    input.value = (cfg && cfg.serverUrl) || window.ycfs.defaultServer;
+  });
+  document.getElementById('cancel').addEventListener('click', () => {
+    window.ycfs.closeSettings();
+  });
+  document.getElementById('save').addEventListener('click', async () => {
+    let url = input.value.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      if (/^[\w.-]+(:\d+)?(\/.*)?$/i.test(url)) url = 'https://' + url;
+      else { input.focus(); return; }
+    }
+    await window.ycfs.setConfig({ serverUrl: url });
+    await window.ycfs.retry('');
+    window.ycfs.closeSettings();
+  });
+</script>
+</body>
+</html>
