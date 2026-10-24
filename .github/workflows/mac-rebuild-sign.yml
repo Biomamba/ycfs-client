@@ -1,0 +1,91 @@
+name: mac-rebuild-sign
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mac-rebuild-sign.yml'
+      - 'main.js'
+      - 'preload.js'
+      - 'pages/**'
+      - 'build/icon.png'
+      - 'builder-mac-*.json'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-sign:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: npm install --no-audit --no-fund
+
+      - name: Build macOS x64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac --config builder-mac-x64.json
+
+      - name: Build macOS arm64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac --config builder-mac-arm64.json
+
+      - name: Ad-hoc re-sign and verify
+        run: |
+          set -e
+          for d in "dist-x64/mac" "dist-arm64/mac-arm64"; do
+            APP="$d/言出法随生信APP.app"
+            codesign --force --deep --sign - "$APP"
+            codesign --verify --deep --strict "$APP"
+            echo "signed + verified: $APP"
+          done
+
+      - name: Repack zips with ASCII names and hash
+        run: |
+          set -e
+          ditto -c -k --keepParent "dist-x64/mac/言出法随生信APP.app" "dist-x64/YanChuFaSui-1.0.2-mac-x64.zip"
+          ditto -c -k --keepParent "dist-arm64/mac-arm64/言出法随生信APP.app" "dist-arm64/YanChuFaSui-1.0.2-mac-arm64.zip"
+          shasum -a 256 dist-x64/*.zip dist-arm64/*.zip | tee mac-hashes.txt
+
+      - name: Compose release body
+        run: |
+          set -e
+          {
+            echo "言出法随生信APP —— YCFS 生信智能平台桌面客户端"
+            echo ""
+            echo "## v1.0.2 更新内容"
+            echo "- 修复：官网登录/微信登录在应用内窗口完成，登录后自动进入界面（不再跳系统浏览器）"
+            echo "- macOS 包由 GitHub Actions 在真 macOS 上构建并通过 ad-hoc 签名（arm64 可直接运行）"
+            echo ""
+            echo "## 安装说明"
+            echo "- Windows：下载 YanChuFaSui-Portable-1.0.2.exe，免安装，双击即用。首次运行 SmartScreen 提示时选「更多信息 → 仍要运行」。"
+            echo "- macOS：Apple Silicon（M1/M2/M3…）选 arm64，Intel 选 x64。解压拖入「应用程序」。首次打开：右键 App →「打开」→「打开」。"
+            echo ""
+            echo "## 官方校验值 SHA256"
+            echo '```'
+            echo "YanChuFaSui-Portable-1.0.2.exe"
+            echo "  3f3ecbcc3cd475c0a194a64ae318c96e58ad36ed6651c88a968dce62511d3241"
+            cat mac-hashes.txt | sed 's/^/  /'
+            echo '```'
+            echo ""
+            echo "客户端为线上平台入口封装：平台更新无需更新客户端。"
+          } > body.md
+
+      - name: Update release v1.0.2 (replace mac assets)
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v1.0.2
+          allowUpdates: true
+          replaceAssets: true
+          bodyFile: body.md
+          artifacts: 'dist-x64/YanChuFaSui-1.0.2-mac-x64.zip,dist-arm64/YanChuFaSui-1.0.2-mac-arm64.zip'
