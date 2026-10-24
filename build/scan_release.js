@@ -13,6 +13,7 @@ const PATTERNS = [
   // credential material
   'BEGIN PRIVATE KEY', 'BEGIN RSA', 'api_key', 'apikey', 'api-key',
   'sk-', 'Bearer ', 'authorization:',
+  'ghp_', 'github_pat_', 'gho_', 'ghu_', 'ghs_', 'ghr_',
   // secrets file names
   'auth.json', 'ed25519'
 ];

@@ -70,9 +70,9 @@ https://www.biomamba.cn/YCFS_APP/client-update.json
 
 ## 开发与构建
 
-依赖：Node.js ≥ 20。Windows 构建在本机；**macOS 构建在 Biomamba 服务器**
-（electron-builder 不支持 Windows→macOS 交叉构建；Linux 可构建未签名 mac zip。
-按项目约定，构建放「大机器」Biomamba，不碰官网面板服务器 YCFS）。
+依赖：Node.js ≥ 20。Windows 构建在本机；**macOS 构建需在 Linux/macOS 机器上进行**
+（electron-builder 不支持 Windows→macOS 交叉构建；Linux 可构建未签名 mac zip）。
+构建服务器与目录见内部运维记录。
 
 ### Windows（本机）
 
@@ -82,18 +82,18 @@ npm install --registry=https://registry.npmmirror.com
 npm run dist:win    # dist/言出法随生信APP-Portable-<版本>.exe
 ```
 
-### macOS（在 Biomamba 服务器上）
+### macOS（Linux/macOS 构建机）
 
 ```bash
-cd /data3/biomamba/analysis/ycfs-client-build   # 先把改动的源码/配置 scp 上去
-export ELECTRON_MIRROR=https://mirrors.huaweicloud.com/electron/          # 大文件走华为云镜像（npmmirror 到该机仅 65KB/s）
+cd <ycfs-client-build>   # 先把改动的源码/配置同步到构建目录
+export ELECTRON_MIRROR=https://mirrors.huaweicloud.com/electron/          # 国内构建机建议华为云镜像
 export ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/
 export CSC_IDENTITY_AUTO_DISCOVERY=false
 npx electron-builder --mac --config builder-mac-x64.json     # 只传 --mac，架构由配置文件决定
 npx electron-builder --mac --config builder-mac-arm64.json
 ```
 
-产物在 `dist-x64/`、`dist-arm64/`，scp 拉回本地 `dist/`。
+产物在 `dist-x64/`、`dist-arm64/`。
 
 ### 本地试运行
 
